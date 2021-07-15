@@ -394,7 +394,12 @@ func (ts *webprofileTestServer) ServeHTTP(w http.ResponseWriter, r *http.Request
 	}
 	if r.RequestURI == "/v1/billing-agreements/agreement-tokens" {
 		if r.Method == "POST" {
-			ts.create(w, r)
+			ts.createWithoutName(w, r)
+		}
+	}
+	if r.RequestURI == "/v1/billing-agreements/agreements" {
+		if r.Method == "POST" {
+			ts.createWithoutName(w, r)
 		}
 	}
 	if r.RequestURI == "/v1/billing-agreements/agreements" {
@@ -792,9 +797,8 @@ func TestCreateBillingAgreementToken(t *testing.T) {
 
 	_, err := c.CreateBillingAgreementToken(
 		context.Background(),
-		"name A",
 		"description A",
-		"start date A",
+		&ShippingAddress{RecipientName: "Recipient", City: "San Francisco"},
 		&Payer{PaymentMethod: "paypal"},
 		&BillingPlan{ID: "id B", Name: "name B", Description: "description B", Type: "type B"})
 
